@@ -42,9 +42,12 @@ module Jekyll
       dot_files = (dot - dot_dirs)
       if @site.config['convert_all']
         dot_pages = dot_files.select { |file|
-          @site.converters.each { |c| 
+          matching_converters = @site.converters.select { |c| 
             c.matches File.extname(@site.in_source_dir(base,file))
           }
+          # puts file, matching_converters
+          # HACK: dirties possible. skip identity converter assuming it always present in converters list
+          matching_converters.count > 1
         }
       else
         dot_pages = dot_files.select{ |file| Utils.has_yaml_header?(@site.in_source_dir(base,file)) }
